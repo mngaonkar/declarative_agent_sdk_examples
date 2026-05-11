@@ -1,0 +1,11 @@
+name: simple_agent
+description: writes a poem from current news
+provider: openai
+model: gpt-4o
+tools:
+  - tavily_search
+skills_directory: ./skills
+skills:
+  - poem-skill
+
+output_key: agent_response
