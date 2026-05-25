@@ -29,6 +29,20 @@ def create_collation_agent(name: str) -> AIAgent:
 
     return agent
 
+
+async def run_query_and_collect_full_stream(agent: AIAgent, query: str) -> str:
+    """Collect final response text without terminating the underlying stream early."""
+    final_response = ""
+    async for event in agent.run_query(query):
+        if (
+            event.is_final_response()
+            and not event.long_running_tool_ids
+            and event.content
+            and event.content.parts
+        ):
+            final_response = event.content.parts[0].text or ""
+    return final_response
+
 agent = create_collation_agent("collation_agent")
 logger.info("Collation agent initialized.")
 
@@ -47,7 +61,7 @@ async def collation_agent(state: AgentState) -> AgentState:
 
     Use the create_pdf_file tool with both the chapter_locations list and toc_location."""
 
-    collation_response = await ca.run_query_and_collect(user_prompt)
+    collation_response = await run_query_and_collect_full_stream(ca, user_prompt)
     logger.info(f"Collation agent response: {collation_response}")
 
     save_to_file(collation_response, OUTPUT_PDF_LOCATION)

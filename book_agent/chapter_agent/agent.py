@@ -33,6 +33,20 @@ def create_chapter_agent(name: str) -> AIAgent:
     return agent
 
 
+async def run_query_and_collect_full_stream(agent: AIAgent, query: str) -> str:
+    """Collect final response text without terminating the underlying stream early."""
+    final_response = ""
+    async for event in agent.run_query(query):
+        if (
+            event.is_final_response()
+            and not event.long_running_tool_ids
+            and event.content
+            and event.content.parts
+        ):
+            final_response = event.content.parts[0].text or ""
+    return final_response
+
+
 async def chapter_agent_parallel(state: AgentState) -> AgentState:
     """Process all chapters in parallel using async."""
     toc_file = state.get("agents_output", {}).get("toc_agent", "")
@@ -60,7 +74,7 @@ async def chapter_agent_parallel(state: AgentState) -> AgentState:
         # Run agent asynchronously
         user_prompt = f"title = {chapter.get('title')}\n subtopics = {subtopics}"
 
-        chapter_response = await chapter_agent.run_query_and_collect(user_prompt)
+        chapter_response = await run_query_and_collect_full_stream(chapter_agent, user_prompt)
         chapter_response = remove_think_content(chapter_response)
         logger.info(f"Chapter agent response for '{chapter.get('title')}' received ({len(chapter_response)} characters)")
         
