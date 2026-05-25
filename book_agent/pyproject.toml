@@ -1,0 +1,14 @@
+[project]
+name = "book-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "declarative-agent-sdk",
+    "dotenv>=0.9.9",
+    "markdown-pdf>=1.13.1",
+]
+
+[tool.uv.sources]
+declarative-agent-sdk = { git = "https://github.com/mngaonkar/declarative_agent_sdk.git" }
