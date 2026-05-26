@@ -1,9 +1,11 @@
 name: simple_agent
-description: writes a poem from current news
+description: multi-skill agent that can perform various tasks using different skills
 provider: openai
-model: gpt-4o
+model: gpt-5.4
 skills_directory: ./skills
 skills:
   - nasa-image
+  - battery-skill
 
+tools_approval_required: true
 output_key: agent_response
