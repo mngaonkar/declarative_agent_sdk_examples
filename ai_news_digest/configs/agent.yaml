@@ -1,0 +1,14 @@
+name: ai_news_digest
+description: agent to gather top AI news 
+skills_directory: ./skills
+skills:
+  - ai-news 
+
+provider: vllm
+model: Qwen/Qwen3-4B 
+tools_approval_required: false
+endpoint:
+  url: http://10.0.0.200:8000/v1
+  max_tokens: 4096
+  temperature: 0.8
+output_key: agent_response
